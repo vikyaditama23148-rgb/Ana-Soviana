@@ -12,6 +12,8 @@ import {
 import { gardenRegistry, FlowerHead } from '../lib/gardenRegistry';
 import { FOV, SceneLayout } from '../lib/sceneLayout';
 import { lerp, mulberry32 } from '../lib/utils';
+import { computePhotoSlots } from '../lib/photoLayout';
+import { photos } from '../lib/photos';
 import { sceneState } from '../lib/sceneState';
 import { softPointFragment } from '../scenes/shaderChunks';
 import type { DeviceProfile } from '../hooks/useDeviceProfile';
@@ -230,6 +232,8 @@ function buildGarden(layout: SceneLayout, profile: DeviceProfile, geos: Geos, ma
   const ty0 = narrow ? -halfH * 0.84 : -halfH * 0.97;
   const ty1 = heartY - 1.9;
 
+  const photoCount = Math.min(photos.length, profile.isMobile ? experience.photos.maxVisibleMobile : experience.photos.maxVisibleDesktop);
+  const photoSlots = computePhotoSlots(layout, photoCount);
   const placed: Placed[] = [];
   for (const spec of plan) {
     for (let i = 0; i < spec.n; i++) {
@@ -252,6 +256,8 @@ function buildGarden(layout: SceneLayout, profile: DeviceProfile, geos: Geos, ma
           if (ex2 < 1) continue;
         }
         if (Math.abs(x) < tw && y > ty0 && y < ty1) continue;
+
+        if (photoSlots.some((ps) => Math.abs(x - ps.x) < ps.w / 2 + radius * 0.7 && Math.abs(y - ps.y) < ps.h / 2 + radius * 0.7)) continue;
 
         let ok = true;
         for (const q of placed) {

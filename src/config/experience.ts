@@ -35,6 +35,10 @@ export const experience = {
     touchHint: 'Sentuh bunga atau hatinya',
     whisperButton: 'Pesan kecil',
     finish: 'Sampai di sini',
+    memories: 'Kenangan',
+    close: 'Tutup',
+    prevPhoto: 'Foto sebelumnya',
+    nextPhoto: 'Foto berikutnya',
     replay: 'Ulangi Pengalaman',
     replayShort: 'Ulangi dari awal',
   },
@@ -129,6 +133,26 @@ Dengan tulus, untuk Ana Soviana.`,
 
     /** Kecepatan munculnya kata pada surat (ms per kata). */
     letterWordDelayMs: 85,
+  },
+
+  /* ------------------------------------------------------------------ */
+  /*  FOTO (OPSIONAL)                                                   */
+  /* ------------------------------------------------------------------ */
+
+  photos: {
+    /** Matikan seluruh fitur foto dengan false. */
+    enabled: true,
+    /** Jumlah bingkai yang melayang bersamaan di sekitar hati. */
+    maxVisibleDesktop: 6,
+    maxVisibleMobile: 4,
+    /** Jika foto lebih banyak dari bingkai, ganti foto setiap sekian detik. */
+    swapSeconds: 9,
+    /**
+     * Caption opsional, kuncinya nama file.
+     * Contoh: { '01.jpg': 'Teks singkat', '02.jpg': 'Teks lain' }
+     * Dibiarkan kosong = tanpa caption.
+     */
+    captions: {} as Record<string, string>,
   },
 
   /* ------------------------------------------------------------------ */

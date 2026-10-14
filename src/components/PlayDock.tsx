@@ -1,14 +1,16 @@
 import { useState } from 'react';
-import { Heart, Sparkles } from 'lucide-react';
+import { Heart, Images, Sparkles } from 'lucide-react';
 import { experience } from '../config/experience';
 import { sceneEvents } from '../lib/sceneState';
+import { photos } from '../lib/photos';
 
 interface Props {
   onFinish: () => void;
+  onOpenPhotos: () => void;
 }
 
 /** Adegan interaktif: petunjuk sentuh, pesan kecil bergantian, dan tombol menuju akhir. */
-export default function PlayDock({ onFinish }: Props) {
+export default function PlayDock({ onFinish, onOpenPhotos }: Props) {
   const [whisper, setWhisper] = useState<{ text: string; key: number } | null>(null);
   const [next, setNext] = useState(0);
 
@@ -29,6 +31,12 @@ export default function PlayDock({ onFinish }: Props) {
           <Sparkles size={18} strokeWidth={1.5} />
           <span>{experience.labels.whisperButton}</span>
         </button>
+        {photos.length > 0 && (
+          <button type="button" className="btn" onClick={onOpenPhotos}>
+            <Images size={18} strokeWidth={1.5} />
+            <span>{experience.labels.memories}</span>
+          </button>
+        )}
         <button type="button" className="btn btn-quiet" onClick={onFinish}>
           <Heart size={18} strokeWidth={1.5} />
           <span>{experience.labels.finish}</span>

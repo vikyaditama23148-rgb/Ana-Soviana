@@ -14,6 +14,9 @@ import FinalMoment from './components/FinalMoment';
 import ExperienceControls from './components/ExperienceControls';
 import FallbackHeart from './components/FallbackHeart';
 import SceneBoundary from './components/SceneBoundary';
+import PhotoLightbox from './components/PhotoLightbox';
+import { photoRegistry } from './lib/photoRegistry';
+import { photos } from './lib/photos';
 
 const MainScene = lazy(() => import('./scenes/MainScene'));
 
@@ -24,9 +27,17 @@ export default function App() {
   const [webgl] = useState(() => isWebGLAvailable());
   const [sceneFailed, setSceneFailed] = useState(false);
   const [sceneReady, setSceneReady] = useState(!webgl);
+  const [lightbox, setLightbox] = useState<number | null>(null);
   const audio = useAudio();
   const phaseRef = useRef<Phase>('intro');
   phaseRef.current = phase;
+
+  useEffect(() => {
+    photoRegistry.onSelect = (i) => setLightbox(i);
+    return () => {
+      photoRegistry.onSelect = () => {};
+    };
+  }, []);
 
   const use3D = webgl && !sceneFailed;
   const ready = use3D ? sceneReady : true;
@@ -68,7 +79,7 @@ export default function App() {
   const toFinal = () => setPhase('final');
 
   const showName = phase === 'name' || phase === 'play' || phase === 'final';
-  const interactive = phase !== 'intro' && phase !== 'collapsing';
+  const interactive = phase !== 'intro' && phase !== 'collapsing' && lightbox === null;
   const fallbackActive = phase !== 'intro' && phase !== 'collapsing';
 
   return (
@@ -93,12 +104,16 @@ export default function App() {
           <div className={`dock${phase === 'final' ? ' dock-final' : ''}`}>
             <NameReveal small={phase === 'final'} />
             {phase === 'name' && <NameActions onNext={toLetter} />}
-            {phase === 'play' && <PlayDock onFinish={toFinal} />}
+            {phase === 'play' && <PlayDock onFinish={toFinal} onOpenPhotos={() => setLightbox(0)} />}
             {phase === 'final' && <FinalMoment onReplay={handleReplay} />}
           </div>
         )}
         {phase === 'letter' && <PersonalMessage onContinue={toPlay} />}
       </main>
+
+      {lightbox !== null && photos.length > 0 && (
+        <PhotoLightbox index={Math.min(lightbox, photos.length - 1)} onClose={() => setLightbox(null)} onChange={setLightbox} />
+      )}
 
       {phase !== 'intro' && (
         <ExperienceControls

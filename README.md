@@ -134,7 +134,36 @@ Yang terjadi:
 Volume diatur lewat `audio.volume` di `experience.ts`.
 Gunakan hanya musik yang Anda berhak memakainya; proyek ini tidak menyertakan musik komersial.
 
-## 10. Alur pengalaman
+## 10. Menambahkan foto (opsional)
+
+Foto tampil sebagai **bingkai kenangan yang melayang** di kiri-kanan hati: sudut membulat,
+garis emas champagne tipis, halo merah muda lembut, bergoyang pelan dan sedikit mengikuti gerak kursor.
+Foto muncul bergantian setelah taman mulai mekar, dan disembunyikan saat surat dibaca.
+
+1. Salin foto Anda ke folder **`src/assets/photos/`** (jpg, jpeg, png, webp, avif).
+2. Beri nama berurutan: `01.jpg`, `02.jpg`, `03.jpg`, ... (ditampilkan sesuai urutan nama).
+3. Jalankan ulang `npm run dev` (atau `npm run build`).
+
+Yang terjadi:
+- Ketuk/klik foto, atau tombol **Kenangan**, untuk melihat foto besar (panah kiri/kanan, `Esc` untuk menutup).
+- Jika foto lebih banyak dari bingkai (default 6 di layar lebar, 4 di ponsel), bingkai bergantian
+  mengganti foto dengan fade lembut sehingga semua foto sempat tampil.
+- Foto besar dari ponsel otomatis dikecilkan (maks. 1024 px) untuk tampilan 3D agar hemat memori.
+  Tampilan besar memakai foto aslinya, jadi sebaiknya jangan lebih dari beberapa MB per foto.
+- Tanpa foto, fitur ini tidak muncul sama sekali.
+
+Pengaturan di `src/config/experience.ts`, bagian `photos`:
+
+| Pengaturan | Fungsi |
+|---|---|
+| `enabled` | `false` untuk mematikan fitur foto |
+| `maxVisibleDesktop` / `maxVisibleMobile` | Jumlah bingkai yang tampil bersamaan |
+| `swapSeconds` | Jeda ganti foto bila foto lebih banyak dari bingkai |
+| `captions` | Caption opsional per foto, contoh: `{ '01.jpg': 'Teks singkat' }` |
+
+Privasi: jika repo GitHub Anda publik, foto di folder ini ikut terlihat publik.
+
+## 11. Alur pengalaman
 
 1. **Undangan** — layar gelap berbintang dengan kelopak melayang dan tombol "Open Your Little Universe".
 2. **Hati partikel** — ribuan partikel berkumpul membentuk hati 3D yang berdenyut, dikelilingi partikel yang mengorbit.
@@ -147,7 +176,7 @@ Gunakan hanya musik yang Anda berhak memakainya; proyek ini tidak menyertakan mu
 
 Ikon panah melingkar di pojok kiri atas mengulang dari awal kapan saja.
 
-## 11. Performa & aksesibilitas
+## 12. Performa & aksesibilitas
 
 - Hati, bintang, kilau, dan semburan memakai `Points` + shader (GPU); bunga memakai `InstancedMesh`
   (hanya beberapa draw call). Tidak ada ribuan komponen React.
@@ -158,13 +187,14 @@ Ikon panah melingkar di pojok kiri atas mengulang dari awal kapan saja.
 - Jika WebGL tidak tersedia atau adegan 3D gagal dimuat, tampil hati SVG berdenyut sebagai cadangan,
   dan seluruh alur teks tetap berfungsi.
 
-## 12. Struktur proyek
+## 13. Struktur proyek
 
 ```
 ana-special-universe/
 ├── public/favicon.svg
 ├── src/
 │   ├── assets/music/          ← letakkan musik Anda di sini (opsional)
+│   ├── assets/photos/         ← letakkan foto Anda di sini (opsional)
 │   ├── components/            ← ParticleHeart, FlowerGarden, FloatingPetals, PetalBurst,
 │   │                            Starfield, InteractionLayer, IntroScreen, NameReveal,
 │   │                            PersonalMessage, PlayDock, FinalMoment, AudioControl, ...
@@ -178,7 +208,7 @@ ana-special-universe/
 ├── index.html  package.json  package-lock.json  tsconfig.json  vite.config.ts
 ```
 
-## 13. Pemecahan masalah
+## 14. Pemecahan masalah
 
 | Masalah | Solusi |
 |---|---|
@@ -187,6 +217,7 @@ ana-special-universe/
 | Port 5173 sudah dipakai | Vite otomatis memakai port lain; buka alamat yang tertulis di terminal. Atau `npm run dev -- --port 3000`. |
 | Layar hitam / hanya hati SVG | WebGL mati atau tidak didukung. Aktifkan *hardware acceleration* di pengaturan browser, atau perbarui browser/driver GPU. |
 | Animasi patah-patah di ponsel | Tutup tab lain, matikan mode hemat daya. Kurangi jumlah partikel di `src/hooks/useDeviceProfile.ts` (`heartParticles`, `petals`, `flowerFactor`). |
+| Foto tidak muncul | Pastikan file ada di `src/assets/photos/` berformat jpg/png/webp/avif, lalu jalankan ulang `npm run dev`. Foto hanya tampil setelah taman mulai mekar. |
 | Tombol musik tidak muncul | Belum ada file audio di `src/assets/music/`, atau Anda belum menjalankan ulang `npm run dev` setelah menambahkannya. |
 | Musik tidak terdengar | Pastikan volume perangkat/tab tidak *mute* dan tombol musik dalam keadaan menyala. |
 | Halaman kosong setelah di-deploy | Buka lewat server/hosting, bukan `file://`. Unggah seluruh isi `dist/`. |

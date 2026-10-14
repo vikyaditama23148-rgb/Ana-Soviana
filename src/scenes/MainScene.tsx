@@ -6,6 +6,7 @@ import FlowerGarden from '../components/FlowerGarden';
 import FloatingPetals from '../components/FloatingPetals';
 import PetalBurst from '../components/PetalBurst';
 import Starfield from '../components/Starfield';
+import PhotoGallery from '../components/PhotoGallery';
 import InteractionLayer from '../components/InteractionLayer';
 import { useDeviceProfile, DeviceProfile } from '../hooks/useDeviceProfile';
 import { computeLayout, FOV, SceneLayout } from '../lib/sceneLayout';
@@ -72,6 +73,7 @@ function Scene({ profile, interactive, onReady }: { profile: DeviceProfile; inte
       <FlowerGarden profile={profile} layout={layout} />
       <ParticleHeart profile={profile} layout={layout} />
       <FloatingPetals profile={profile} layout={layout} />
+      <PhotoGallery profile={profile} layout={layout} />
       <PetalBurst />
       <InteractionLayer layout={layout} enabled={interactive} />
       <ReadySignal onReady={onReady} />

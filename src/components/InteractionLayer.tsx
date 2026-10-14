@@ -6,6 +6,7 @@ import { lerp } from '../lib/utils';
 import { sceneEvents, sceneState } from '../lib/sceneState';
 import { pulseHeart } from '../lib/director';
 import { burstApi } from './PetalBurst';
+import { photoRegistry } from '../lib/photoRegistry';
 import type { SceneLayout } from '../lib/sceneLayout';
 
 interface Props {
@@ -45,6 +46,20 @@ export default function InteractionLayer({ layout, enabled }: Props) {
       return best;
     };
 
+    const pickPhoto = () => {
+      let best = -1;
+      let bestScore = Infinity;
+      photoRegistry.slots.forEach((h, i) => {
+        if (!h.visible) return;
+        const d = raycaster.ray.distanceToPoint(h.pos) / h.radius;
+        if (d < 1 && d < bestScore) {
+          best = i;
+          bestScore = d;
+        }
+      });
+      return best;
+    };
+
     const heartHit = () => {
       const y = lerp(layout.heartY0, layout.heartY1, sceneState.layout);
       const s = lerp(layout.heartScale0, layout.heartScale1, sceneState.layout);
@@ -55,13 +70,17 @@ export default function InteractionLayer({ layout, enabled }: Props) {
     const onMove = (e: PointerEvent) => {
       if (!enabled || e.pointerType === 'touch') return;
       hoverTarget.index = pick(e.clientX, e.clientY);
-      el.style.cursor = hoverTarget.index >= 0 || heartHit() ? 'pointer' : 'default';
+      photoRegistry.hover = pickPhoto();
+      el.style.cursor = hoverTarget.index >= 0 || photoRegistry.hover >= 0 || heartHit() ? 'pointer' : 'default';
     };
 
     const onDown = (e: PointerEvent) => {
       if (!enabled) return;
       const i = pick(e.clientX, e.clientY);
-      if (i >= 0) {
+      const ph = pickPhoto();
+      if (ph >= 0 && i < 0) {
+        photoRegistry.onSelect(photoRegistry.slots[ph].photoIndex);
+      } else if (i >= 0) {
         const h = gardenRegistry.heads[i];
         burstApi.spawn(h.pos, h.color);
         hoverTarget.index = e.pointerType === 'touch' ? -1 : i;
@@ -76,7 +95,10 @@ export default function InteractionLayer({ layout, enabled }: Props) {
       }
     };
 
-    const onLeave = () => (hoverTarget.index = -1);
+    const onLeave = () => {
+      hoverTarget.index = -1;
+      photoRegistry.hover = -1;
+    };
 
     el.addEventListener('pointermove', onMove);
     el.addEventListener('pointerdown', onDown);
